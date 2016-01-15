@@ -57,7 +57,7 @@ public:
 
 public:
   ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN = -1, 
-               uint8_t stepsPerNotch = 1, bool active = LOW);
+               uint8_t stepsPerNotch = 1, bool active = LOW, bool activeBTN = LOW);
 
   void service(void);  
   int16_t getValue(void);
@@ -99,6 +99,7 @@ private:
   const uint8_t pinB;
   const uint8_t pinBTN;
   const bool pinsActive;
+  const bool pinsActiveBTN;
   volatile int16_t delta;
   volatile int16_t last;
   uint8_t steps;

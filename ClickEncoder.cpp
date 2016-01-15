@@ -43,16 +43,17 @@
 
 // ----------------------------------------------------------------------------
 
-ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active)
+ClickEncoder::ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active, bool activeBTN)
   : doubleClickEnabled(true), accelerationEnabled(true),
     delta(0), last(0), acceleration(0),
     button(Open), steps(stepsPerNotch),
-    pinA(A), pinB(B), pinBTN(BTN), pinsActive(active)
+    pinA(A), pinB(B), pinBTN(BTN), pinsActive(active), pinsActiveBTN(activeBTN)
 {
   uint8_t configType = (pinsActive == LOW) ? INPUT_PULLUP : INPUT;
   pinMode(pinA, configType);
   pinMode(pinB, configType);
-  pinMode(pinBTN, configType);
+  uint8_t configTypeBTN = (pinsActiveBTN == LOW) ? INPUT_PULLUP : INPUT;
+  pinMode(pinBTN, configTypeBTN);
   
   if (digitalRead(pinA) == pinsActive) {
     last = 3;
@@ -135,14 +136,14 @@ void ClickEncoder::service(void)
   { 
     lastButtonCheck = now;
     
-    if (digitalRead(pinBTN) == pinsActive) { // key is down
+    if (digitalRead(pinBTN) == pinsActiveBTN) { // key is down
       keyDownTicks++;
       if (keyDownTicks > (ENC_HOLDTIME / ENC_BUTTONINTERVAL)) {
         button = Held;
       }
     }
 
-    if (digitalRead(pinBTN) == !pinsActive) { // key is now up
+    if (digitalRead(pinBTN) == !pinsActiveBTN) { // key is now up
       if (keyDownTicks /*> ENC_BUTTONINTERVAL*/) {
         if (button == Held) {
           button = Released;
